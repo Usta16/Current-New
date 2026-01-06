@@ -1,3 +1,4 @@
+9
 local ImportGlobals
 
 -- Holds direct closure data (defining this before the DOM tree for line debugging etc)
@@ -3339,3 +3340,22 @@ return tools
 
 end)() end
 }
+
+
+function ImportGlobals(idx)
+    local selectedClosure = ClosureBindings[idx]
+    return function(moduleIdx)
+        return function(...)
+            local module = ClosureBindings[moduleIdx]
+            if module then
+                return module()
+            end
+        end
+    end, nil, function(path)
+        -- Handle require calls within modules
+        return ClosureBindings[idx]
+    end
+end
+
+-- Execute and return the main library module
+return ClosureBindings[1]()
