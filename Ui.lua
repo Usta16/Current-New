@@ -1,4 +1,3 @@
-9
 local ImportGlobals
 
 -- Holds direct closure data (defining this before the DOM tree for line debugging etc)
