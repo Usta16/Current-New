@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key System Tutorial - Da7mu Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=YouTube+Sans:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yt-black: #0f0f0f;
+            --yt-red: #ff0000;
+            --yt-white: #f1f1f1;
+            --yt-gray: #aaaaaa;
+            --card-bg: #1e1e1e;
+            --accent: #3ea6ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--yt-black);
+            color: var(--yt-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 15px 25px;
+            background: var(--yt-black);
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'YouTube Sans', sans-serif;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo span {
+            background: var(--yt-red);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1100px;
+            padding: 20px;
+        }
+
+        /* VIDEO PLAYER STYLING */
+        .video-container {
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ROTATED VIDEO FIX */
+        .video-container video {
+            width: auto;
+            height: 100%;
+            transform: rotate(0deg); /* Adjust to 90deg or -90deg if your specific file needs it */
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                aspect-ratio: 9 / 16; /* Mobile portrait focus */
+            }
+            .video-container video {
+                height: 100%;
+                width: auto;
+            }
+        }
+
+        .video-info {
+            margin-top: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .video-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .channel-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--yt-red), #ff5f5f);
+        }
+
+        .channel-name {
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        /* LOOTLABS STEPS */
+        .tutorial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .step-card:hover {
+            background: #2a2a2a;
+        }
+
+        .step-tag {
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .step-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            font-size: 14px;
+            color: var(--yt-gray);
+            line-height: 1.4;
+        }
+
+        /* ACTION BUTTONS */
+        .button-group {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-next {
+            background: var(--yt-white);
+            color: var(--yt-black);
+        }
+
+        .btn-next:hover {
+            background: #d9d9d9;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Mobile specific rotation tweak */
+        .rotate-90 { transform: rotate(90deg); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">
+            Da7mu <span>HUB</span>
+        </a>
+    </header>
+
+    <main>
+        <div class="video-container">
+            <video controls preload="metadata">
+                <source src="https://jumpshare.com/v/5hf2xiVMuHvczwdBt2CS" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="video-info">
+            <h1 class="video-title">Official Key System Tutorial (LootLabs)</h1>
+            <div class="channel-row">
+                <div class="avatar"></div>
+                <div class="channel-name">Da7mu Hub Support <br><span style="font-size: 12px; color: var(--yt-gray);">1.2M views • Just now</span></div>
+            </div>
+        </div>
+
+        <div class="tutorial-grid">
+            <div class="step-card">
+                <span class="step-tag">Step 1</span>
+                <h3>Enter LootLabs</h3>
+                <p>Click the link generated by the script. You will be taken to the LootLabs gateway.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-tag">Step 2</span>
+                <h3>Complete Tasks</h3>
+                <p>Click "Unlock Content" and follow the simple browser tasks (read articles/install extension).</p>
+            </div>
+            <div class="step-card">
+                <span class="step-tag">Step 3</span>
+                <h3>Get Script Key</h3>
+                <p>Once tasks are verified, you will be redirected to your unique access key. Copy it immediately.</p>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="work-ink-tutorial.html" class="btn btn-next">Next Tutorial: Work.Ink Guide</a>
+            <a href="index.html" class="btn btn-back">Return to Home</a>
+        </div>
+    </main>
+
+    <script>
+        // Optional: Small script to detect if video needs rotation based on screen width
+        const video = document.querySelector('video');
+        if(window.innerWidth > 768) {
+            // video.style.transform = "rotate(0deg)";
+        }
+    </script>
+</body>
+</html>

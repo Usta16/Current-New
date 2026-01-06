@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Da7mu Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #050505;
+            --bg-card: rgba(20, 20, 25, 0.7);
+            --text-main: #EDEDED;
+            --text-muted: #9CA3AF;
+            --primary: #6366f1;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --container-width: 800px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%);
+            color: var(--text-main);
+            margin: 0; line-height: 1.6; min-height: 100vh;
+        }
+
+        nav {
+            position: sticky; top: 0; background: rgba(5,5,5,0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle); padding: 18px 24px; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-weight: 700; text-decoration: none; color: white; display: flex; align-items: center; gap: 8px;}
+        .back-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: 0.2s; font-weight: 500; }
+        .back-link:hover { color: white; }
+
+        .legal-content { 
+            max-width: var(--container-width); margin: 60px auto; padding: 40px;
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 16px; backdrop-filter: blur(10px);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 10px; letter-spacing: -0.03em; background: linear-gradient(to right, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+        .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 40px; display: block; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px;}
+        
+        h2 { font-size: 1.5rem; margin-top: 30px; margin-bottom: 16px; color: white; letter-spacing: -0.02em; }
+        p { color: var(--text-muted); margin-bottom: 16px; font-size: 1rem; }
+        strong { color: var(--text-main); }
+
+        footer { border-top: 1px solid var(--border-subtle); padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+            Da7mu Hub
+        </a>
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </nav>
+
+    <div class="legal-content">
+        <h1>Terms of Service</h1>
+        <span class="last-updated">Last updated: January 2025</span>
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using Da7mu Hub, you accept and agree to be bound by the terms and provision of this agreement.</p>
+
+        <h2>2. Educational Purpose Disclaimer</h2>
+        <p>The software and scripts provided on this website are strictly for <strong>educational and development testing purposes</strong>. We do not encourage or condone the use of these tools to disrupt services or violate the Terms of Service of any third-party platform (e.g., Roblox).</p>
+
+        <h2>3. Limitation of Liability</h2>
+        <p>Da7mu Hub and its creators are not responsible for any consequences that may arise from the use of our scripts, including but not limited to account bans, suspensions, or loss of digital assets. You use these tools entirely at your own risk.</p>
+
+        <h2>4. User Conduct</h2>
+        <p>You agree not to reverse engineer, decompile, or attempt to derive the source code of the hub infrastructure. You also agree not to distribute malicious versions of our software.</p>
+    </div>
+
+    <footer>
+        &copy; 2025 Da7mu Hub. All rights reserved.
+    </footer>
+</body>
+</html>

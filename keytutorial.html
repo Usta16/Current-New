@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Key Tutorial - Da7mu Hub</title>
+    <meta name="description" content="Step-by-step guide on how to get access to Da7mu Hub's scripts.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Synchronized Palette */
+            --bg-body: #050505;
+            --bg-card: rgba(20, 20, 25, 0.8);
+            --text-main: #EDEDED;
+            --text-muted: #9CA3AF;
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --container-width: 800px;
+            --header-height: 70px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%),
+                              radial-gradient(circle at 100% 100%, #1a1a2e 0%, transparent 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        
+        .container { 
+            width: 100%;
+            max-width: var(--container-width); 
+            margin: 0 auto; 
+            padding: 0 24px; 
+        }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; width: 100%; height: var(--header-height);
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-subtle); z-index: 1000;
+        }
+        .nav-wrapper { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+        .logo { 
+            font-weight: 800;
+            color: white; 
+            display: flex; align-items: center; gap: 10px; 
+            font-size: 1.2rem; 
+        }
+        .logo svg { width: 22px; height: 22px; fill: white; }
+        .back-btn { 
+            color: var(--primary); font-weight: 600; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* TUTORIAL CONTENT */
+        .tutorial-section { padding-top: 60px; padding-bottom: 80px; text-align: center; }
+
+        h1 { 
+            font-size: 2.5rem;
+            font-weight: 800; 
+            margin-bottom: 15px; 
+            letter-spacing: -0.025em;
+        }
+        .subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 50px; }
+
+        /* VIDEO CONTAINER - FIXED FOR DESKTOP */
+        .video-container-outer {
+            width: 100%;
+            margin-bottom: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none; 
+            display: block;
+            object-fit: cover;
+            background: #000;
+        }
+        
+        /* Desktop video fix */
+        @media (min-width: 601px) {
+            .video-wrapper video {
+                object-fit: contain;
+            }
+        }
+
+        /* STEP CARD */
+        .step-card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 16px; padding: 30px; text-align: left; margin-bottom: 20px;
+        }
+        .step-card h3 { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: var(--primary);
+            margin-bottom: 12px; 
+            display: flex; align-items: center; gap: 10px;
+        }
+        .step-card h3::before {
+            content: attr(data-step);
+            background: var(--primary); color: white;
+            border-radius: 50%; width: 28px; height: 28px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1rem; font-weight: 700;
+            flex-shrink: 0; 
+        }
+        .step-card p { color: var(--text-main); margin-bottom: 15px; }
+        .step-card a { color: var(--primary-hover); text-decoration: underline; }
+        .step-card code { 
+            font-family: 'JetBrains Mono', monospace; 
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 7px; border-radius: 6px;
+            word-break: break-all;
+            color: #aff;
+        }
+
+        /* BUTTONS */
+        .btn-group { 
+            display: flex; 
+            justify-content: center;
+            gap: 20px; 
+            margin-top: 50px; 
+        }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; 
+            width: 100%;
+            max-width: 300px;
+            padding: 0 24px; height: 55px;
+            font-size: 1.05rem; font-weight: 600;
+            border-radius: 10px; cursor: pointer; transition: all 0.3s ease; gap: 8px;
+        }
+
+        .btn-secondary { 
+            /* Updated to look more like a primary action for the next step */
+            background: var(--primary); color: white; border: none;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+        .btn-secondary:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            .btn-group { flex-direction: column; align-items: center; }
+            h1 { font-size: 2.1rem; }
+            .tutorial-section { padding-top: 40px; padding-bottom: 60px; }
+            .step-card { padding: 25px; }
+            .btn { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-wrapper">
+            <a href="index.html" class="logo">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                Da7mu Hub
+            </a>
+            <a href="index.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                Back to Home
+            </a>
+        </div>
+    </header>
+
+    <section class="tutorial-section container">
+        <h1>Script Access Tutorial</h1>
+        <p class="subtitle">Follow these steps carefully to gain access to the script library.</p>
+
+        <div class="video-container-outer">
+            <div class="video-wrapper">
+                <video 
+                    controls 
+                    playsinline 
+                    webkit-playsinline 
+                    preload="auto">
+                    <source src="https://files.catbox.moe/39l2va.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+        
+        <div class="step-card">
+            <h3 data-step="1">Download the Executor</h3>
+            <p>Ensure you have the latest version of your preferred Roblox executor installed. This is crucial for successful script execution.</p>
+        </div>
+
+        <div class="step-card">
+            <h3 data-step="2">Retrieve the Script Code</h3>
+            <p>Load the executor and enter the designated URL or button to receive the required access code/script text.</p>
+        </div>
+
+        <div class="step-card">
+            <h3 data-step="3">Load the Code</h3>
+            <p>Paste the received script code into the execution window of your executor. Make sure the entire code block is present.</p>
+        </div>
+        
+        <div class="step-card">
+            <h3 data-step="4">Execute the Script</h3>
+            <p>Click the execute button within your executor. The script should now load successfully, allowing you to use our features.</p>
+        </div>
+
+        <div class="btn-group">
+            <a href="Tutorial2.html" class="btn btn-secondary">
+                Go to Next Tutorial
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+        </div>
+
+    </section>
+
+</body>
+</html>

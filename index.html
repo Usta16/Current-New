@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da7mu Hub | Professional Roblox Script Hub</title>
+    <meta name="description" content="Centralized Roblox Exploit Hub for easy access, sharing, and execution.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* CYBERPUNK/NEON PALETTE */
+            --bg-body: #050510; /* Very deep blue-black */
+            --bg-card: rgba(15, 20, 35, 0.75); /* Deeper, more saturated */
+            --text-main: #f5f5f5;
+            --text-muted: #8c9bb7; /* Blue-tinted gray for contrast */
+            --primary: #5c62ec; /* Brighter Indigo */
+            --primary-hover: #7b83f3;
+            --accent-glow: rgba(92, 98, 236, 0.5);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --container-width: 1300px; /* Slightly wider */
+            --header-height: 80px; /* Slightly taller */
+        }
+
+        /* --- BASE & UTILITIES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            /* Bolder, more atmospheric background effect */
+            background-image: radial-gradient(circle at 75% 10%, rgba(92, 98, 236, 0.1) 0%, transparent 40%),
+                              radial-gradient(circle at 20% 90%, rgba(100, 100, 250, 0.08) 0%, transparent 45%);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+        ul { list-style: none; }
+        
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 30px; }
+
+        /* --- HEADER & NAV --- */
+        header {
+            position: fixed; top: 0; width: 100%; height: var(--header-height);
+            background: rgba(5, 5, 16, 0.9); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-subtle); z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .nav-wrapper { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+
+        .logo { 
+            font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; 
+            font-size: 1.4rem; text-shadow: 0 0 5px rgba(255, 255, 255, 0.1); 
+        }
+        .logo svg { width: 24px; height: 24px; fill: var(--primary); }
+
+        /* BURGER MENU TRIGGER */
+        .burger-btn {
+            background: none; border: none; cursor: pointer;
+            width: 45px; height: 45px;
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+            gap: 7px; z-index: 1002;
+            padding: 0;
+        }
+        
+        .burger-line {
+            width: 30px; height: 3px; background-color: var(--primary); /* Highlight with primary color */
+            border-radius: 2px; transition: all 0.3s ease;
+        }
+        .burger-line.short { width: 20px; }
+
+        .burger-btn:hover .burger-line.short { width: 30px; background-color: var(--primary-hover); }
+
+        /* Burger Active State */
+        .burger-btn.active .burger-line:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); width: 30px; background-color: var(--text-main); }
+        .burger-btn.active .burger-line:nth-child(2) { opacity: 0; }
+        .burger-btn.active .burger-line:nth-child(3) { transform: rotate(-45deg) translate(8px, -8px); width: 30px; background-color: var(--text-main); }
+
+        /* FULL SCREEN MENU OVERLAY */
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(5, 5, 16, 0.98); /* Near opaque blue-black */
+            backdrop-filter: blur(5px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1001; opacity: 0; pointer-events: none; transition: opacity 0.4s ease, transform 0s 0.4s;
+            transform: scale(1.1); /* Start slightly zoomed for entry effect */
+            
+            /* Enhanced Grid Background inside overlay */
+            background-image: linear-gradient(rgba(92, 98, 236, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(92, 98, 236, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        .menu-overlay.active { opacity: 1; pointer-events: all; transform: scale(1); transition: opacity 0.4s ease, transform 0.4s ease; }
+        
+        .menu-links { text-align: center; display: flex; flex-direction: column; gap: 40px; position: relative; }
+
+        .menu-link {
+            font-size: 2.5rem; font-weight: 700; color: var(--text-muted);
+            letter-spacing: -0.05em; transition: 0.3s;
+        }
+        .menu-link:hover, .menu-link.active { 
+            color: var(--text-main); 
+            transform: scale(1.05); 
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+        .menu-link.highlight { color: var(--primary); }
+        /* END MENU STYLES */
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0 30px; height: 55px; font-size: 1.0rem; font-weight: 700;
+            border-radius: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); gap: 10px;
+        }
+
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+            border: 2px solid var(--primary);
+            box-shadow: 0 6px 20px -5px var(--accent-glow);
+        }
+        .btn-primary:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 30px -8px var(--accent-glow); 
+        }
+
+        .btn-secondary { 
+            background: rgba(255,255,255,0.05); 
+            color: var(--text-main); 
+            border: 1px solid var(--primary); /* Highlight secondary button with primary border */
+        }
+        .btn-secondary:hover { 
+            background: rgba(255,255,255,0.1); 
+            border-color: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        /* --- HERO --- */
+        .hero { padding-top: 200px; padding-bottom: 140px; text-align: center; }
+
+        .badge {
+            display: inline-flex; align-items: center; padding: 6px 16px;
+            border-radius: 100px; 
+            background: rgba(92, 98, 236, 0.15); /* Stronger badge color */
+            border: 1px solid rgba(92, 98, 236, 0.4);
+            font-size: 0.85rem; font-weight: 600; 
+            color: var(--primary-hover); margin-bottom: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
+        .badge span { 
+            width: 8px; height: 8px; 
+            background: var(--primary-hover); 
+            border-radius: 50%; margin-right: 10px; 
+            box-shadow: 0 0 15px var(--primary-hover); 
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(92, 98, 236, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(92, 98, 236, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(92, 98, 236, 0); }
+        }
+
+        .hero h1 {
+            font-size: 5rem; font-weight: 900; letter-spacing: -0.06em; line-height: 1.05; margin-bottom: 30px;
+            background: linear-gradient(to top, var(--primary) 0%, #ffffff 80%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(92, 98, 236, 0.7); /* Bolder text glow */
+        }
+
+        .hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 50px auto; font-weight: 300; }
+        .hero-actions { display: flex; justify-content: center; gap: 20px; }
+
+        /* --- FEATURES GRID SECTION (NEW) --- */
+        .section-features { padding: 80px 0; }
+        .features-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            margin-top: 40px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-hover);
+            box-shadow: 0 10px 30px rgba(92, 98, 236, 0.3);
+        }
+        .feature-card h3 { color: var(--primary-hover); font-size: 1.25rem; margin-bottom: 10px; font-weight: 700; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* --- SECTIONS (FAQ) --- */
+        .section-faq { padding: 100px 0; border-top: 1px solid var(--border-subtle); }
+        .section-header { margin-bottom: 60px; text-align: center; }
+        .section-header h2 { 
+            font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; 
+            margin-bottom: 15px; color: white; 
+        }
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .faq-item { 
+            border-bottom: 1px solid var(--border-subtle); 
+            transition: background 0.3s;
+            background: rgba(0,0,0,0);
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-item:hover { background: rgba(92, 98, 236, 0.05); }
+
+        .faq-question {
+            width: 100%; text-align: left; background: none; border: none; padding: 30px 0;
+            font-size: 1.15rem; color: var(--text-main); font-weight: 600; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; transition: color 0.2s;
+        }
+        .faq-question span { 
+            font-size: 1.5rem; font-weight: 400; color: var(--primary);
+            transition: transform 0.3s;
+        }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+        .faq-answer p { 
+            padding-bottom: 30px; 
+            color: var(--text-muted); 
+            font-size: 1rem; 
+            padding-right: 40px;
+        }
+        .faq-item.active { background: rgba(92, 98, 236, 0.1); }
+        .faq-item.active .faq-question { color: var(--primary-hover); }
+        .faq-item.active .faq-question span { transform: rotate(45deg); }
+
+        /* --- CTA CARD --- */
+        .discord-section { padding: 100px 0; }
+        .cta-card {
+            background: var(--bg-card); border: 2px solid var(--primary); /* Stronger border */
+            border-radius: 30px; padding: 100px 40px; text-align: center;
+            backdrop-filter: blur(15px); position: relative; overflow: hidden;
+            box-shadow: 0 0 50px rgba(92, 98, 236, 0.4); /* Stronger initial glow */
+            transition: all 0.4s;
+        }
+        .cta-card:hover { 
+            border-color: var(--primary-hover); 
+            box-shadow: 0 0 60px rgba(92, 98, 236, 0.7), 0 0 10px white; /* Intense hover glow */
+            transform: scale(1.01);
+        }
+        .cta-card h2 { font-size: 3rem; color: white; margin-bottom: 20px; font-weight: 900; }
+        .cta-card p { color: var(--text-muted); margin-bottom: 40px; font-size: 1.2rem; }
+
+        /* --- FOOTER --- */
+        footer { border-top: 1px solid var(--border-subtle); padding: 50px 0; margin-top: 40px; }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-start; }
+        .footer-left p { color: var(--text-muted); font-size: 0.9rem; }
+        .footer-links { display: flex; gap: 30px; }
+        .footer-links a { font-size: 0.95rem; color: var(--text-muted); }
+        .footer-links a:hover { color: var(--primary-hover); }
+
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 4rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; gap: 30px; align-items: center; text-align: center; }
+            .footer-links { flex-wrap: wrap; justify-content: center; }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p { font-size: 1.1rem; }
+            .hero-actions { flex-direction: column; gap: 10px; }
+            .cta-card h2 { font-size: 2rem; }
+            .faq-question { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                Da7mu Hub
+            </a>
+            
+            <button class="burger-btn" id="burgerToggle" aria-label="Toggle Menu">
+                <span class="burger-line"></span>
+                <span class="burger-line short"></span>
+                <span class="burger-line"></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <nav class="menu-links">
+            <a href="index.html" class="menu-link active" onclick="closeMenu()">Home</a>
+            <a href="executorstatus.html" class="menu-link" onclick="closeMenu()">Executor Status</a> 
+            <a href="./scripts/index.html" class="menu-link" onclick="closeMenu()">Scripts Library</a>
+            
+            <a href="tutorial.html" class="menu-link" onclick="closeMenu()">Download Tutorial</a>
+
+            <a href="keytutorial.html" class="menu-link highlight" onclick="closeMenu()">Key Tutorial</a>
+            
+            <a href="#faq" class="menu-link" onclick="closeMenu()">FAQs</a>
+            <a href="#discord" class="menu-link" onclick="closeMenu()">Community</a>
+        </nav>
+    </div>
+
+    <section class="hero container">
+        <div class="badge"><span></span>UPDATED 2025</div>
+        <h1>Roblox Scripting<br>Redefined.</h1>
+        <p>The centralized hub for high-performance execution. Secure, fast, and constantly updated for the latest patches.</p>
+        
+        <div class="hero-actions">
+            <a href="./scripts/index.html" class="btn btn-primary">View Script Library</a>
+            <a href="#discord" class="btn btn-secondary">Join Discord</a>
+        </div>
+    </section>
+
+    <section id="features" class="section-features container">
+        <div class="section-header">
+            <h2>Core Hub Features</h2>
+            <p>Built for the modern executor environment.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Universal Compatibility</h3>
+                <p>Scripts are rigorously tested for high UNC (Unified Naming Convention) scores, ensuring maximum compatibility across most modern PC and Mobile executors.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Real-Time Status</h3>
+                <p>The dedicated Executor Status page provides verified, real-time stability metrics and patch information for popular exploit tools.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Zero Malicious Code</h3>
+                <p>We guarantee code transparency. All hosted scripts and tools are free from loggers, malware, and dangerous obfuscation. Community safety first.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="section-faq container">
+        <div class="section-header">
+            <h2>Common Questions</h2>
+            <p>Everything you need to know about safety and execution.</p>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">Are all Executors Safe? <span>+</span></button>
+            <div class="faq-answer"><p>Not all executors are safe. Da7mu Hub strictly hosts verified scripts. We recommend researching any external executor before inputting credentials. Always use an alternate account (alt) for testing any new software.</p></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">What is UNC Support? <span>+</span></button>
+            <div class="faq-answer"><p>UNC (Unified Naming Convention) is a metric that determines a script's compatibility. High UNC means the script uses common, reliable naming conventions that work on almost all modern, well-maintained executors. Our goal is 100% UNC support.</p></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">Is Da7mu Hub Safe? <span>+</span></button>
+            <div class="faq-answer"><p>Yes. We prioritize code transparency and community safety. Our hub does not contain malicious obfuscation or loggers. We are a community-driven resource, constantly monitored and updated to ensure security.</p></div>
+        </div>
+    </section>
+
+    <section id="discord" class="discord-section container">
+        <div class="cta-card">
+            <h2>Join the Syndicate</h2>
+            <p>Get instant access to updates, support, real-time status alerts, and community scripts from the source.</p>
+            <a href="https://discord.gg/4ZVm6WqSZ7" target="_blank" class="btn btn-primary">Join Discord Server</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-left">
+                <a href="#" class="logo" style="margin-bottom: 10px;">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                    Da7mu Hub
+                </a>
+                <p>&copy; 2025 Da7mu Hub. All Rights Reserved.</p>
+            </div>
+            <nav class="footer-links">
+                <a href="executorstatus.html">Status</a> 
+                <a href="tutorial.html">Download</a> 
+                <a href="keytutorial.html">Key Guide</a> 
+                <a href="terms.html">Terms</a>
+                <a href="privacy.html">Privacy</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle Mobile/Burger Menu
+        const burgerBtn = document.getElementById('burgerToggle');
+        const menuOverlay = document.getElementById('menuOverlay');
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                burgerBtn.classList.add('active');
+                menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            } else {
+                burgerBtn.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        function closeMenu() {
+            if (isMenuOpen) {
+                isMenuOpen = false;
+                burgerBtn.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        burgerBtn.addEventListener('click', toggleMenu);
+
+        // FAQ Logic
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const answer = item.querySelector('.faq-answer');
+            const isActive = item.classList.contains('active');
+            
+            // Close all others
+            document.querySelectorAll('.faq-item.active').forEach(i => {
+                if (i !== item) {
+                    i.classList.remove('active');
+                    i.querySelector('.faq-answer').style.maxHeight = null;
+                    i.querySelector('.faq-question span').textContent = '+';
+                }
+            });
+
+            if (!isActive) {
+                item.classList.add('active');
+                // Use scrollHeight plus a small buffer for smooth animation
+                answer.style.maxHeight = answer.scrollHeight + 30 + "px";
+                btn.querySelector('span').textContent = '×'; // Changed + to × for better visual close
+            } else {
+                item.classList.remove('active');
+                answer.style.maxHeight = null;
+                btn.querySelector('span').textContent = '+';
+            }
+        }
+
+        // Smooth Scroll (Updated to use hash links)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                }
+                closeMenu(); 
+            });
+        });
+    </script>
+</body>
+</html>
