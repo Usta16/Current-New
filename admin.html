@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da7mu Analytics | Command Center</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        background: '#030305',
+                        surface: '#0A0A0C',
+                        surfaceHighlight: '#121215',
+                        primary: '#6366f1',     
+                        primaryGlow: '#4f46e5', 
+                        accent: '#06b6d4',      
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        border: 'rgba(255, 255, 255, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #030305; color: #e2e8f0; overflow: hidden; }
+        
+        .ambient-light {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.08), transparent 25%);
+            z-index: -1; pointer-events: none;
+        }
+
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        .glass {
+            background: rgba(10, 10, 12, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-tech {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+        .input-tech:focus { border-color: #6366f1; outline: none; box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3); }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #view-dashboard, #view-keys, #view-keyless, #view-active {
+            scrollbar-width: thin; 
+            scrollbar-color: #333 transparent;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4b5563;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #6366f1;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col relative selection:bg-primary selection:text-white">
+
+    <div class="ambient-light"></div>
+    <div class="fixed inset-0 bg-grid z-[-1] opacity-50"></div>
+
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#030305] transition-opacity duration-500">
+        <div class="glass p-10 rounded-2xl w-full max-w-sm relative z-10 border border-white/10 shadow-2xl flex flex-col items-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-primary/30">
+                <i class="fa-solid fa-layer-group text-2xl text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">Da7mu<span class="text-primary">Analytics</span></h1>
+            <p class="text-gray-500 text-sm mb-8">Secure Admin Environment</p>
+            
+            <div class="w-full space-y-4">
+                <div class="relative group">
+                    <i class="fa-solid fa-lock absolute left-4 top-3.5 text-gray-500 transition-colors"></i>
+                    <input type="password" id="admin-pass" class="w-full input-tech rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-600 font-mono text-sm" placeholder="ENTER ACCESS KEY" onkeydown="if(event.key==='Enter') attemptLogin()">
+                </div>
+                <button onclick="attemptLogin()" class="w-full bg-gradient-to-r from-primary to-primaryGlow hover:to-primary text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-primary/25 active:scale-95">Initialize Session</button>
+            </div>
+            <p id="login-error" class="text-danger mt-4 text-xs font-mono hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> ACCESS DENIED</p>
+        </div>
+    </div>
+
+    <div id="app-content" class="flex h-full opacity-0 scale-95 transition-all duration-700 hidden filter blur-sm">
+        
+        <aside class="hidden md:flex w-72 glass border-r border-border flex-col z-20">
+            <div class="p-6 flex items-center gap-3 border-b border-border/50">
+                <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <h2 class="text-lg font-bold tracking-wide">Da7mu<span class="text-gray-500 font-normal">Panel</span></h2>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 mt-2">
+                <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Navigation</p>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all bg-primary/10 text-primary border border-primary/20">
+                    <i class="fa-solid fa-chart-line w-5 text-center"></i> <span class="font-medium">Statistics</span>
+                </button>
+                <button onclick="switchTab('active')" id="nav-active" class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all border border-transparent">
+                    <i class="fa-solid fa-users w-5 text-center"></i> <span class="font-medium">Active Sessions</span>
+                </button>
+                <button onclick="switchTab('keys')" id="nav-keys" class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all border border-transparent">
+                    <i class="fa-solid fa-key w-5 text-center"></i> <span class="font-medium">Key Manager</span>
+                </button>
+                <button onclick="switchTab('keyless')" id="nav-keyless" class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all border border-transparent">
+                    <i class="fa-solid fa-lock-open w-5 text-center"></i> <span class="font-medium">Keyless Mode</span>
+                </button>
+            </nav>
+            <div class="p-4 border-t border-border/50">
+                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 py-2.5 rounded-lg transition text-sm font-medium">
+                    <i class="fa-solid fa-power-off"></i> Disconnect
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-hidden flex flex-col relative">
+            <header class="glass sticky top-0 z-10 border-b border-border px-4 md:px-8 py-4 md:py-5 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                     <button onclick="logout()" class="md:hidden text-red-400 hover:text-red-300"><i class="fa-solid fa-power-off"></i></button>
+                     <div>
+                        <h2 id="page-title" class="text-lg md:text-xl font-bold text-white">Dashboard Overview</h2>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="flex h-2 w-2 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                            </span>
+                            <p class="text-gray-500 text-xs font-mono">LIVE | PING: <span id="stat-ping">--</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="refreshData()" class="w-10 h-10 rounded-full border border-border bg-surfaceHighlight hover:bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition group">
+                        <i class="fa-solid fa-rotate group-hover:rotate-180 transition-transform duration-500"></i>
+                    </button>
+                    <div class="flex md:hidden bg-surfaceHighlight rounded-lg p-1 border border-border">
+                        <button onclick="switchTab('dashboard')" class="p-2 text-primary"><i class="fa-solid fa-chart-line"></i></button>
+                        <button onclick="switchTab('active')" class="p-2 text-gray-400"><i class="fa-solid fa-users"></i></button>
+                        <button onclick="switchTab('keys')" class="p-2 text-gray-400"><i class="fa-solid fa-key"></i></button>
+                         <button onclick="switchTab('keyless')" class="p-2 text-gray-400"><i class="fa-solid fa-lock-open"></i></button>
+                    </div>
+                    <div class="hidden md:flex px-4 py-2 rounded-full border border-border bg-surfaceHighlight items-center gap-3">
+                        <span id="clock" class="text-xs font-mono text-gray-400">00:00:00</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+                
+                <!-- Dashboard Overview -->
+                <div id="view-dashboard" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Total Injections</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-white font-mono" id="stat-clicks">0</h3>
+                                </div>
+                                <div class="p-3 bg-primary/10 rounded-xl text-primary border border-primary/20"><i class="fa-solid fa-syringe"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">HWID Verified</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-white font-mono" id="stat-checkpoints">0</h3>
+                                </div>
+                                <div class="p-3 bg-accent/10 rounded-xl text-accent border border-accent/20"><i class="fa-solid fa-fingerprint"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Total Keys</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-white font-mono" id="stat-keys">0</h3>
+                                </div>
+                                <div class="p-3 bg-yellow-500/10 rounded-xl text-yellow-500 border border-yellow-500/20"><i class="fa-solid fa-key"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">System Heat</p>
+                                    <div class="flex items-baseline gap-2 mt-2">
+                                        <h3 class="text-3xl font-bold text-white font-mono" id="stat-streak">0</h3>
+                                        <span class="text-xs text-red-400 font-bold">STREAK <i class="fa-solid fa-fire"></i></span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-red-500/10 rounded-xl text-red-500 border border-red-500/20"><i class="fa-solid fa-bolt"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Active Now</p>
+                                    <div class="flex items-baseline gap-2 mt-2">
+                                        <h3 class="text-3xl font-bold text-white font-mono" id="stat-active-now">0</h3>
+                                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-green-500/10 rounded-xl text-green-500 border border-green-500/20"><i class="fa-solid fa-users"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-4 md:p-6 rounded-2xl border border-border">
+                        <div class="h-64 md:h-80 w-full relative"><canvas id="mainChart"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Active Sessions View -->
+                <div id="view-active" class="hidden space-y-6">
+                    <div class="glass p-6 rounded-2xl border border-border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                            <h3 class="text-xl font-bold text-white">Real-Time Active Sessions</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6">Users who executed the script within the last 5 minutes. This shows currently active HWIDs.</p>
+                        
+                        <div class="md:glass md:rounded-2xl md:overflow-hidden md:border md:border-border">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="hidden md:table-header-group bg-surfaceHighlight border-b border-border text-gray-400 uppercase text-xs tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4 font-medium">User ID</th>
+                                        <th class="px-6 py-4 font-medium">HWID</th>
+                                        <th class="px-6 py-4 font-medium">License Key</th>
+                                        <th class="px-6 py-4 font-medium">Last Activity</th>
+                                        <th class="px-6 py-4 font-medium">Clicks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="active-sessions-body" class="block md:table-row-group w-full space-y-4 md:space-y-0"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Manager -->
+                <div id="view-keys" class="hidden space-y-6">
+                    <div class="glass p-4 rounded-2xl flex flex-col md:flex-row justify-between gap-4 border border-border">
+                        <div class="relative w-full md:w-96 group">
+                            <i class="fa-solid fa-search absolute left-4 top-3.5 text-gray-500 group-focus-within:text-primary transition-colors"></i>
+                            <input type="text" id="key-search" onkeyup="filterKeys()" placeholder="Search Hash, HWID..." class="w-full bg-surfaceHighlight border border-border text-gray-200 pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:border-primary/50 text-sm font-mono">
+                        </div>
+                        <button onclick="openKeyCreationModal()" class="bg-primary hover:bg-primaryGlow text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 font-bold transition-all shadow-lg shadow-primary/20 active:scale-95">
+                            <i class="fa-solid fa-plus"></i> <span>Create Key</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Filter Tabs -->
+                    <div class="glass p-2 rounded-xl border border-border inline-flex gap-2 flex-wrap">
+                        <button onclick="filterKeysByStatus('all')" id="filter-all" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-primary/20 text-primary">All Keys</button>
+                        <button onclick="filterKeysByStatus('Active')" id="filter-active" class="px-4 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:bg-white/5">Active</button>
+                        <button onclick="filterKeysByStatus('Used')" id="filter-used" class="px-4 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:bg-white/5">Used</button>
+                        <button onclick="filterKeysByStatus('Expired')" id="filter-expired" class="px-4 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:bg-white/5">Expired</button>
+                        <button onclick="filterKeysByStatus('Banned')" id="filter-banned" class="px-4 py-2 rounded-lg text-sm font-medium transition text-gray-400 hover:bg-white/5">Banned</button>
+                    </div>
+                    
+                    <div class="md:glass md:rounded-2xl md:overflow-hidden md:border md:border-border">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="hidden md:table-header-group bg-surfaceHighlight border-b border-border text-gray-400 uppercase text-xs tracking-wider">
+                                <tr>
+                                    <th class="px-6 py-4 font-medium">License Key</th>
+                                    <th class="px-6 py-4 font-medium">User ID</th>
+                                    <th class="px-6 py-4 font-medium">Status / HWID</th>
+                                    <th class="px-6 py-4 font-medium">Type</th>
+                                    <th class="px-6 py-4 font-medium">Expiry</th>
+                                    <th class="px-6 py-4 text-right font-medium">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keys-table-body" class="block md:table-row-group w-full space-y-4 md:space-y-0"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Keyless Mode -->
+                <div id="view-keyless" class="hidden space-y-6">
+                    <div class="glass p-6 md:p-8 rounded-2xl border border-border">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                                    Keyless Script Loader 
+                                    <i class="fa-solid fa-lock-open text-primary text-xl"></i>
+                                </h3>
+                                <p class="text-gray-400 max-w-xl">
+                                    Toggling this switch ON enables a special "Keyless" mode in the script loader. When active, anyone using the Keyless String will gain access without a valid license key. **Use with caution!**
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center gap-4">
+                                <span id="keyless-status-text" class="text-sm font-mono font-bold uppercase" data-status="false">
+                                    <i class="fa-solid fa-circle text-red-500 mr-2"></i> INACTIVE
+                                </span>
+                                
+                                <label for="keyless-toggle" class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" value="" id="keyless-toggle" class="sr-only peer" onclick="toggleKeyless()">
+                                    <div class="w-14 h-7 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 border-t border-border/50 pt-6">
+                            <h4 class="text-lg font-bold text-white mb-3">Keyless Loader String</h4>
+                            <p class="text-gray-500 mb-4 text-sm">
+                                This is the specific input the loader will accept when the Keyless mode is active.
+                            </p>
+                            <div class="bg-black/50 p-4 rounded-xl border border-dashed border-gray-700 flex justify-between items-center cursor-pointer hover:border-accent/50 transition-colors" onclick="copyText('D7-KEYLESS-SCRIPTHOOK')">
+                                <code class="text-accent font-mono text-sm md:text-lg select-all">D7-KEYLESS-SCRIPTHOOK</code>
+                                <i class="fa-regular fa-copy text-gray-500 ml-2"></i>
+                            </div>
+                            <p class="text-danger text-xs mt-3">
+                                **WARNING:** Ensure you update your client loader code with this specific string if you are using the Keyless feature.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Key Creation Modal -->
+    <div id="modal-key-creation" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center transition-all duration-300 opacity-0 px-4">
+        <div class="glass border border-border p-8 rounded-2xl w-full max-w-2xl shadow-2xl transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-2xl font-bold text-white mb-6 text-center">Generate New License Key</h3>
+            
+            <div class="space-y-5">
+                <!-- User ID -->
+                <div>
+                    <label for="key-user-id" class="block text-sm font-medium text-gray-400 mb-2">User Identifier (Optional)</label>
+                    <input type="text" id="key-user-id" class="w-full input-tech rounded-lg py-2.5 px-4 text-white placeholder-gray-600 text-sm font-mono" placeholder="Discord ID or Username">
+                </div>
+                
+                <!-- Duration Hours -->
+                <div>
+                    <label for="key-duration-hours" class="block text-sm font-medium text-gray-400 mb-2">
+                        Key Validity (Hours) <span class="text-gray-600">- 0 = Forever</span>
+                    </label>
+                    <input type="number" id="key-duration-hours" min="0" value="24" class="w-full input-tech rounded-lg py-2.5 px-4 text-white placeholder-gray-600 text-sm font-mono" placeholder="24">
+                </div>
+
+                <!-- Custom HWID -->
+                <div>
+                    <label for="key-custom-hwid" class="block text-sm font-medium text-gray-400 mb-2">
+                        Custom HWID (Optional) <span class="text-gray-600">- Lock to specific device</span>
+                    </label>
+                    <input type="text" id="key-custom-hwid" class="w-full input-tech rounded-lg py-2.5 px-4 text-white placeholder-gray-600 text-sm font-mono" placeholder="Leave empty for auto-bind on first use">
+                </div>
+
+                <!-- HWID Limit -->
+                <div>
+                    <label for="key-hwid-limit" class="block text-sm font-medium text-gray-400 mb-2">
+                        HWID Device Limit <span class="text-gray-600">- Max devices allowed</span>
+                    </label>
+                    <input type="number" id="key-hwid-limit" min="1" max="10" value="1" class="w-full input-tech rounded-lg py-2.5 px-4 text-white placeholder-gray-<input type="number" id="key-hwid-limit" min="1" max="10" value="1" class="w-full input-tech rounded-lg py-2.5 px-4 text-white placeholder-gray-600 text-sm font-mono" placeholder="1">
+                    <p class="text-xs text-gray-500 mt-1">Key will lock after being used on this many devices</p>
+                </div>
+
+                <!-- Toggle Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Forever Key Toggle -->
+                    <div class="bg-surfaceHighlight p-4 rounded-lg border border-border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white font-medium text-sm">Forever Key</p>
+                                <p class="text-gray-500 text-xs mt-1">Never expires</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="key-forever-toggle" onchange="toggleForeverKey()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Premium Key Toggle -->
+                    <div class="bg-surfaceHighlight p-4 rounded-lg border border-border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white font-medium text-sm">Premium Key</p>
+                                <p class="text-gray-500 text-xs mt-1">Shows in Premium tab</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="key-premium-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3 bg-surfaceHighlight p-3 rounded-lg border border-border">
+                    <i class="fa-solid fa-fire text-red-400"></i>
+                    <p class="text-sm text-gray-300 flex-1">
+                        **Streak Enabled:** Keys with an expiry time will gain **+10 minutes** on expiration for each consecutive daily use.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <button onclick="closeKeyCreationModal()" class="w-full bg-surfaceHighlight hover:bg-gray-800 text-gray-300 py-3 rounded-xl transition font-medium border border-border">Cancel</button>
+                <button onclick="submitKeyGeneration()" id="submit-key-gen" class="w-full bg-primary hover:bg-primaryGlow text-white py-3 rounded-xl transition font-bold flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-plus"></i> Generate Key
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Key Display Modal -->
+    <div id="modal-key-display" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center transition-all duration-300 opacity-0 px-4">
+        <div class="glass border border-border p-8 rounded-2xl w-full max-w-md shadow-2xl transform scale-95 transition-all duration-300">
+            <div class="text-center mb-6">
+                <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-success/10 mb-4 ring-1 ring-success/30">
+                    <i class="fa-solid fa-check text-success text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">License Generated</h3>
+                <p id="new-key-expiry-display" class="text-gray-500 text-sm mt-1"></p>
+            </div>
+            
+            <div class="bg-black/50 p-4 rounded-xl border border-dashed border-gray-700 mb-6 flex justify-between items-center cursor-pointer hover:border-primary/50 transition-colors" onclick="copyNewKey()">
+                <code id="new-key-display" class="text-primary font-mono text-sm md:text-lg break-all">LOADING...</code>
+               <i class="fa-regular fa-copy text-gray-500 ml-2"></i>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeKeyDisplayModal()" class="w-full bg-surfaceHighlight hover:bg-gray-800 text-gray-300 py-3 rounded-xl transition font-medium border border-border">Close</button>
+                <button onclick="copyNewKey()" class="w-full bg-primary hover:bg-primaryGlow text-white py-3 rounded-xl transition font-medium">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 translate-y-24 transition-transform duration-300 z-[110]">
+        <div class="bg-surfaceHighlight border border-border text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-success"></i>
+            <span id="toast-msg" class="text-sm font-medium">Action completed</span>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
